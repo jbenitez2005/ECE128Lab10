@@ -1,0 +1,32 @@
+module multiplier(a,b,p);
+    input  [3:0] a,b;
+    output [7:0] p;
+
+    wire [3:0] m0;
+    wire [4:0] m1;
+    wire [5:0] m2;mm
+    wire [6:0] m3;
+
+    wire [7:0] s1, s2, s3;
+
+    // Partial product 0 (no shift)
+    assign m0 = b[0] ? a : 4'b0000;
+
+    // Partial product 1 (shift left 1)
+    assign m1 = b[1] ? {a,1'b0} : 5'b00000;
+
+    // Partial product 2 (shift left 2)
+    assign m2 = b[2] ? {a,2'b00} : 6'b000000;
+
+    // Partial product 3 (shift left 3)
+    assign m3 = b[3] ? {a,3'b000} : 7'b0000000;
+
+    // Aligning partial products to 8 bits
+    assign s1 = {3'b000, m1};
+    assign s2 = {2'b00,  m2};
+    assign s3 = {1'b0,   m3};
+
+    // Final product
+    assign p = {4'b0000, m0} + s1 + s2 + s3;
+
+endmodule
