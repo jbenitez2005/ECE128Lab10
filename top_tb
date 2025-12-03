@@ -5,7 +5,7 @@ module top_tb;
     wire [7:0] result;
 
     // DUT instance
-    top_module_system uut (
+    top_level_system uut (
         .clk   (clk),
         .rst   (rst),
         .addr1 (addr1),
