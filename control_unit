@@ -1,0 +1,81 @@
+module control_unit (
+    input clk,
+    input rst,
+    input [2:0] addr1,
+    input [2:0] addr2,
+
+    output reg [2:0] rom_addr,
+    output reg       rf_w,
+    output reg [1:0] rf_w_addr,
+    output reg       ram_w,
+    output reg [2:0] ram_addr
+);
+
+    // State register
+    reg [2:0] state;
+
+    localparam
+        s0 = 3'd0,
+        s1 = 3'd1,
+        s2 = 3'd2,
+        s3 = 3'd3;
+
+    // Sequential logic
+    always @(posedge clk) begin
+
+        if (rst) begin
+            state      <= s0;
+            rom_addr   <= 3'd0;
+            ram_addr   <= 3'd0;
+            rf_w       <= 1'b0;
+            ram_w      <= 1'b0;
+            rf_w_addr  <= 2'b00;
+        end 
+        
+        else begin
+            case (state)
+
+                // ---------------------------------------------------
+                // Load operand A into RF[0]
+                // ---------------------------------------------------
+                s0: begin
+                    rom_addr  <= addr1;
+                    rf_w      <= 1'b1;
+                    rf_w_addr <= 2'b00;
+                    ram_w     <= 1'b0;
+                    state     <= s1;
+                end
+
+                // ---------------------------------------------------
+                // Load operand B into RF[1]
+                // ---------------------------------------------------
+                s1: begin
+                    rom_addr  <= addr2;
+                    rf_w      <= 1'b1;
+                    rf_w_addr <= 2'b01;
+                    ram_w     <= 1'b0;
+                    state     <= s2;
+                end
+
+                // ---------------------------------------------------
+                // Idle for multiply (combinational)
+                // ---------------------------------------------------
+                s2: begin
+                    rf_w  <= 1'b0;
+                    ram_w <= 1'b0;
+                    state <= s3;
+                end
+
+                // ---------------------------------------------------
+                // Write product into RAM
+                // ---------------------------------------------------
+                s3: begin
+                    ram_w <= 1'b1;
+                    state <= s0;
+                end
+
+            endcase
+        end
+    end
+
+endmodule
