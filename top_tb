@@ -1,0 +1,39 @@
+module top_tb;
+
+    reg        clk, rst;
+    reg  [2:0] addr1, addr2;
+    wire [7:0] result;
+
+    // DUT instance
+    top_module_system uut (
+        .clk   (clk),
+        .rst   (rst),
+        .addr1 (addr1),
+        .addr2 (addr2),
+        .result(result)
+    );
+
+    // Clock generation
+    always #5 clk = ~clk;
+
+    // Initial conditions
+    initial begin
+        clk = 0;
+        rst = 1;
+        addr1 = 3'd0;
+        addr2 = 3'd0;
+        #15 rst = 0;
+    end
+
+    // Stimulus sequence
+    initial begin
+        #30 addr1 = 3'd3;  addr2 = 3'd1;
+        #30 addr1 = 3'd5;  addr2 = 3'd2;
+        #30 addr1 = 3'd7;  addr2 = 3'd4;
+        #30 addr1 = 3'd1;  addr2 = 3'd6;
+        #30 addr1 = 3'd2;  addr2 = 3'd7;
+        #30 addr1 = 3'd4;  addr2 = 3'd3;
+        #90 $finish;
+    end
+
+endmodule
