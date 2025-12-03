@@ -1,0 +1,34 @@
+// 2-register file (each 4 bits)
+// register 0 → output a
+// register 1 → output b
+module rf(
+    input         clk,
+    input         rst,
+    input         w,                // write enable
+    input  [1:0]  w_addr,           // write address (0 or 1)
+    input  [3:0]  w_data,           // data to store
+    output [3:0]  a,                // contents of register 0
+    output [3:0]  b                 // contents of register 1
+);
+
+    // two 4-bit registers
+    reg [3:0] regs [0:1];
+
+    // direct output assignment
+    assign a = regs[0];
+    assign b = regs[1];
+
+    // sequential write / reset behavior
+    always @(posedge clk) begin
+        if (rst) begin
+            // clear both registers on reset
+            regs[0] <= 4'd0;
+            regs[1] <= 4'd0;
+        end 
+        else if (w) begin
+            // write into selected register
+            regs[w_addr] <= w_data;
+        end
+    end
+
+endmodule
